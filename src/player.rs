@@ -12,15 +12,15 @@ pub struct Player;
 /// Player logic is only active during the State `GameState::Playing`
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_player))
-            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(move_player));
+        app.add_systems(OnEnter(GameState::Playing), spawn_player)
+            .add_systems(Update, move_player.run_if(in_state(GameState::Playing)));
     }
 }
 
 fn spawn_player(mut commands: Commands, textures: Res<TextureAssets>) {
     commands
         .spawn(SpriteBundle {
-            texture: textures.texture_bevy.clone(),
+            texture: textures.bevy.clone(),
             transform: Transform::from_translation(Vec3::new(0., 0., 1.)),
             ..Default::default()
         })
